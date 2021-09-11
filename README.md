@@ -1,4 +1,4 @@
-Tugas Chapter 1 - Studi Independen
+Tugas Chapter 2 - Studi Independen
 
 Albert Salomo - ID AGATE - 111
 
