@@ -96,6 +96,7 @@ public class ResourceController : MonoBehaviour
         ResourceUpgradeCost.text = $"Upgrade Cost\n{ GetUpgradeCost() }";
         ResourceDescription.text = $"{ _config.Name } Lv. { _level }\n+{ GetOutput().ToString("0") }";
         upgradeSound.Play();
+        AnalyticsManager.LogUpgradeEvent(_index, _level);
     }
 
     public void UnlockResource()
@@ -111,6 +112,7 @@ public class ResourceController : MonoBehaviour
         GameManager.Instance.ShowNextResource();
         AchievementController.Instance.UnlockAchievement(AchievementType.UnlockResource, _config.Name);
         unlockedSound.Play();
+        AnalyticsManager.LogUnlockEvent(_index);
     }
     public void SetUnlocked(bool unlocked)
     {
