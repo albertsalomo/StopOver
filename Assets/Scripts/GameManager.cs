@@ -40,68 +40,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
     // Fungsi [Range (min, max)] ialah menjaga value agar tetap berada di antara min dan max-nya 
 
     [Range(0f, 1f)]
-
     public float AutoCollectPercentage = 0.1f;
-
     public ResourceConfig[] ResourcesConfigs;
-
     public Sprite[] ResourcesSprites;
 
-
-
     public Transform ResourcesParent;
-
     public ResourceController ResourcePrefab;
-
     public TapText TapTextPrefab;
-
     public Transform background;
-
 
     //IMAGE LIST
     public Transform SilverIcon;
     public Transform CoinIcon;
     public Transform DiamondIcon;
 
-
     public Text GoldInfo;
-
     public Text AutoCollectInfo;
-
     public Text TotalTapInfo;
 
-
-
     private List<ResourceController> _activeResources = new List<ResourceController>();
-
     private List<TapText> _tapTextPool = new List<TapText>();
-
     private float _collectSecond;
 
-    public double _totalGold;
-
-
-
     private void Start()
-
     {
-
         AddAllResources();
+        GoldInfo.text = $"Gold: { UserDataManager.Progress.Gold.ToString("0") }";
 
     }
-
-
 
     private void Update()
     {
         // Fungsi untuk selalu mengeksekusi CollectPerSecond setiap detik
         _collectSecond += Time.unscaledDeltaTime;
-
         if (_collectSecond >= 1f)
         {
             CollectPerSecond();
@@ -109,8 +83,6 @@ public class GameManager : MonoBehaviour
         }
 
         CheckResourceCost();
-
-
 
         int resourceUnlockCount = 0;
 
@@ -120,11 +92,7 @@ public class GameManager : MonoBehaviour
             {
                 resourceUnlockCount += 1;
             }
-
         }
-
-        Debug.Log(resourceUnlockCount);
-
 
         //set gambar 
         CoinIcon.gameObject.SetActive(false);
@@ -152,130 +120,78 @@ public class GameManager : MonoBehaviour
         }
 
         TotalResource();
-
-
     }
-
-
 
 
     private void AddAllResources()
-
     {
         bool showResources = true;
-
+        int index = 0;
         foreach (ResourceConfig config in ResourcesConfigs)
-
         {
-
             GameObject obj = Instantiate(ResourcePrefab.gameObject, ResourcesParent, false);
-
             ResourceController resource = obj.GetComponent<ResourceController>();
 
-
-
-            resource.SetConfig(config);
-
+            resource.SetConfig(index,config);
             obj.gameObject.SetActive(showResources);
 
-
-
             if (showResources && !resource.IsUnlocked)
-
             {
-
                 showResources = false;
-
             }
-
             _activeResources.Add(resource);
-
+            index++;
         }
-
     }
 
     public void ShowNextResource()
-
     {
-
         foreach (ResourceController resource in _activeResources)
-
         {
-
             if (!resource.gameObject.activeSelf)
-
             {
-
                 resource.gameObject.SetActive(true);
-
                 break;
-
             }
-
         }
-
     }
 
-
-
     private void CollectPerSecond()
-
     {
-
         double output = 0;
-
         foreach (ResourceController resource in _activeResources)
-
         {
-
             if (resource.IsUnlocked)
             {
                 output += resource.GetOutput();
             }
-
         }
 
-
-
         output *= AutoCollectPercentage;
-
         // Fungsi ToString("F1") ialah membulatkan angka menjadi desimal yang memiliki 1 angka di belakang koma 
-
-        AutoCollectInfo.text = $"Auto Collect: { output.ToString("F0") } / second";
-
-
-
+        AutoCollectInfo.text = $"Auto Collect: { output.ToString("F1") } / second";
         AddGold(output);
-
     }
 
 
 
     public void AddGold(double value)
-
     {
-
-        _totalGold += value;
-
-        GoldInfo.text = $"Point: { _totalGold.ToString("0")}";
-
+        UserDataManager.Progress.Gold += value;
+        GoldInfo.text = $"Point: { UserDataManager.Progress.Gold.ToString("0")}";
+        UserDataManager.Save();
     }
 
     public void TotalResource()
     {
-
         double output = 0;
-
         foreach (ResourceController resource in _activeResources)
-
         {
             if (resource.IsUnlocked)
             {
                 output += resource.GetOutput();
             }
         }
-
-
         TotalTapInfo.text = $"Point per tap: { output.ToString("F0") }";
     }
 
@@ -292,16 +208,11 @@ public class GameManager : MonoBehaviour
             }
         }
 
-
-
         TapText tapText = GetOrCreateTapText();
         tapText.transform.SetParent(parent, false);
         tapText.transform.position = tapPosition;
         tapText.Text.text = $"+{ output.ToString("0") }";
         tapText.gameObject.SetActive(true);
-
-
-
 
         //coin pas di tap
 
@@ -309,59 +220,39 @@ public class GameManager : MonoBehaviour
         SilverIcon.transform.localScale = Vector3.one * 0.55f;
         DiamondIcon.transform.localScale = Vector3.one * .3f;
 
-
-
-
         AddGold(output);
-
         tapSound.Play();
-
     }
 
     private TapText GetOrCreateTapText()
-
     {
-
         TapText tapText = _tapTextPool.Find(t => !t.gameObject.activeSelf);
-
         if (tapText == null)
-
         {
-
             tapText = Instantiate(TapTextPrefab).GetComponent<TapText>();
 
             _tapTextPool.Add(tapText);
-
         }
         return tapText;
-
     }
 
     private void CheckResourceCost()
-
     {
-
         foreach (ResourceController resource in _activeResources)
-
         {
-
             bool isBuyable = false;
 
             if (resource.IsUnlocked)
             {
-                isBuyable = _totalGold >= resource.GetUpgradeCost();
+                isBuyable = UserDataManager.Progress.Gold >= resource.GetUpgradeCost();
             }
 
             else
             {
-                isBuyable = _totalGold >= resource.GetUnlockCost();
+                isBuyable = UserDataManager.Progress.Gold >= resource.GetUnlockCost();
             }
 
             resource.ResourceImage.sprite = ResourcesSprites[isBuyable ? 1 : 0];
-
         }
-
     }
-
 }
-
