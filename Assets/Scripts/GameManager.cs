@@ -3,31 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-
-
-// Fungsi System.Serializable adalah agar object bisa di-serialize dan
-
-// value dapat di-set dari inspector
-
-[System.Serializable]
-
-public struct ResourceConfig
-
-{
-    public string Name;
-    public double UnlockCost;
-    public double UpgradeCost;
-    public double Output;
-}
-
 public class GameManager : MonoBehaviour
 {
-
     public AudioSource tapSound;
-
-
     private static GameManager _instance = null;
-
     public static GameManager Instance
     {
         get
@@ -173,8 +152,6 @@ public class GameManager : MonoBehaviour
         AddGold(output);
     }
 
-
-
     public void AddGold(double value)
     {
         UserDataManager.Progress.Gold += value;
@@ -255,4 +232,17 @@ public class GameManager : MonoBehaviour
             resource.ResourceImage.sprite = ResourcesSprites[isBuyable ? 1 : 0];
         }
     }
+}
+
+// Fungsi System.Serializable adalah agar object bisa di-serialize dan
+// value dapat di-set dari inspector
+
+[System.Serializable]
+public struct ResourceConfig
+
+{
+    public string Name;
+    public double UnlockCost;
+    public double UpgradeCost;
+    public double Output;
 }

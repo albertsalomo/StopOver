@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using System;
 
-
 public class ResourceController : MonoBehaviour
 {
     public Button ResourceButton;
