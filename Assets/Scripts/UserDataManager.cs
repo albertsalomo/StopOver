@@ -87,7 +87,6 @@ public static class UserDataManager
         FirebaseStorage storage = FirebaseStorage.DefaultInstance;
         return storage.GetReferenceFromUrl($"{storage.RootReference}/{deviceID}");
     }
-
     public static bool HasResources(int index)
     {
         return index + 1 <= Progress.ResourcesLevels.Count;

@@ -8,8 +8,6 @@ public static class AnalyticsManager
         FirebaseAnalytics.LogEvent(eventName, parameters);
     }
 
-
-
     public static void LogUpgradeEvent(int resourceIndex, int level)
     {
         // Kita memakai Event dan Parameter yang tersedia di Firebase (tidak memakai yang custom)

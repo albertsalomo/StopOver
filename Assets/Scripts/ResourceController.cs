@@ -4,11 +4,11 @@ using System;
 
 public class ResourceController : MonoBehaviour
 {
-    public Button ResourceButton;
-    public Image ResourceImage;
-    public Text ResourceDescription;
-    public Text ResourceUpgradeCost;
-    public Text ResourceUnlockCost;
+    public Button resourceButton;
+    public Image resourceImage;
+    public Text resourceDescription;
+    public Text resourceUpgradeCost;
+    public Text resourceUnlockCost;
     public AudioSource upgradeSound;
     public AudioSource unlockedSound;
 
@@ -41,7 +41,7 @@ public class ResourceController : MonoBehaviour
 
     private void Start()
     {
-        ResourceButton.onClick.AddListener(() =>
+        resourceButton.onClick.AddListener(() =>
         {
             if (IsUnlocked)
             {
@@ -52,7 +52,7 @@ public class ResourceController : MonoBehaviour
                 UnlockResource();
             }
         });
-        ResourceButton.onClick.AddListener(UpgradeLevel);
+        resourceButton.onClick.AddListener(UpgradeLevel);
     }
 
     public void SetConfig(int index, ResourceConfig config)
@@ -61,25 +61,25 @@ public class ResourceController : MonoBehaviour
         _config = config;
 
         // ToString("0") berfungsi untuk membuang angka di belakang koma
-        ResourceDescription.text = $"{ _config.Name } Lv. { _level }\n+{ GetOutput().ToString("0") }";
-        ResourceUnlockCost.text = $"Unlock Cost\n{ _config.UnlockCost }";
-        ResourceUpgradeCost.text = $"Upgrade Cost\n{ GetUpgradeCost() }";
-        SetUnlocked(_config.UnlockCost == 0 || UserDataManager.HasResources(_index));
+        resourceDescription.text = $"{ _config.name } Lv. { _level }\n+{ GetOutput().ToString("0") }";
+        resourceUnlockCost.text = $"Unlock Cost\n{ _config.unlockCost }";
+        resourceUpgradeCost.text = $"Upgrade Cost\n{ GetUpgradeCost() }";
+        SetUnlocked(_config.unlockCost == 0 || UserDataManager.HasResources(_index));
     }
 
     public double GetOutput()
     {
-        return _config.Output * _level;
+        return _config.output * _level;
     }
 
     public double GetUpgradeCost()
     {
-        return Math.Round((_config.UpgradeCost + (_level * _config.UpgradeCost * (0.4 + _level * 0.5))),0,MidpointRounding.ToEven);
+        return Math.Round((_config.upgradeCost + (_level * _config.upgradeCost * (0.4 + _level * 0.5))),0,MidpointRounding.ToEven);
     }
 
     public double GetUnlockCost()
     {
-        return _config.UnlockCost;
+        return _config.unlockCost;
     }
 
     public void UpgradeLevel()
@@ -93,8 +93,8 @@ public class ResourceController : MonoBehaviour
         GameManager.Instance.AddGold(-upgradeCost);
         _level++;
 
-        ResourceUpgradeCost.text = $"Upgrade Cost\n{ GetUpgradeCost() }";
-        ResourceDescription.text = $"{ _config.Name } Lv. { _level }\n+{ GetOutput().ToString("0") }";
+        resourceUpgradeCost.text = $"Upgrade Cost\n{ GetUpgradeCost() }";
+        resourceDescription.text = $"{ _config.name } Lv. { _level }\n+{ GetOutput().ToString("0") }";
         upgradeSound.Play();
         AnalyticsManager.LogUpgradeEvent(_index, _level);
     }
@@ -110,7 +110,7 @@ public class ResourceController : MonoBehaviour
         SetUnlocked(true);
         UserDataManager.Progress.Gold -= unlockCost;
         GameManager.Instance.ShowNextResource();
-        AchievementController.Instance.UnlockAchievement(AchievementType.UnlockResource, _config.Name);
+        AchievementController.Instance.UnlockAchievement(AchievementType.UnlockResource, _config.name);
         unlockedSound.Play();
         AnalyticsManager.LogUnlockEvent(_index);
     }
@@ -126,8 +126,8 @@ public class ResourceController : MonoBehaviour
                 UserDataManager.Save(true);
             }
         }
-        ResourceImage.color = IsUnlocked ? Color.white : Color.grey;
-        ResourceUnlockCost.gameObject.SetActive(!unlocked);
-        ResourceUpgradeCost.gameObject.SetActive(unlocked);
+        resourceImage.color = IsUnlocked ? Color.white : Color.grey;
+        resourceUnlockCost.gameObject.SetActive(!unlocked);
+        resourceUpgradeCost.gameObject.SetActive(unlocked);
     }
 }

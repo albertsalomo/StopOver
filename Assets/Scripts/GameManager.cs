@@ -241,7 +241,7 @@ public class GameManager : MonoBehaviour
                 isBuyable = UserDataManager.Progress.Gold >= resource.GetUnlockCost();
             }
 
-            resource.ResourceImage.sprite = ResourcesSprites[isBuyable ? 1 : 0];
+            resource.resourceImage.sprite = ResourcesSprites[isBuyable ? 1 : 0];
         }
     }
 }
@@ -251,10 +251,9 @@ public class GameManager : MonoBehaviour
 
 [System.Serializable]
 public struct ResourceConfig
-
 {
-    public string Name;
-    public double UnlockCost;
-    public double UpgradeCost;
-    public double Output;
+    public string name;
+    public double unlockCost;
+    public double upgradeCost;
+    public double output;
 }
